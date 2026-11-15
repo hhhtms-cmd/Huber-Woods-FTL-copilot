@@ -1,6 +1,12 @@
 # Huber Woods — FTL Smart Dispatch Co-pilot
 
-Prototype v1 · 2026-11-15
+Prototype v1.1 · 2026-11-15
+
+## Changelog — v1.1 (code-review fixes)
+- Escape carrier names with `escapeHTML()` before rendering (`rankOut` and the carrier table) — closes the self-XSS path Gemini flagged.
+- `rankCarriers()` returns `[]` early on an empty carrier list, and the UI shows "add at least one carrier" instead of a blank result. (Verified: the v1 empty case already returned `[]` with no NaN; this makes it explicit.)
+- Rate check rejects a historical average ≤ 0 with a plain-language message instead of showing Infinity%. A quote ≤ 0 now falls back to price competitiveness 1.0 instead of Infinity.
+- Default ranking unchanged: B 59.8, A 45.0, C 43.54.
 
 A co-pilot, not a black box, for FTL point-to-point shippers who dispatch on Wed/Thu and fine-tune on Friday. The dispatcher keeps the final decision.
 
