@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Huber Woods — FTL Smart Dispatch Co-pilot</title>
+<style>
+:root{--ink:#16233a;--mut:#5a6b84;--line:#dbe4ef;--bg:#f4f7fb;--card:#fff;--blue:#0f62fe;--green:#0e7a3d;--amber:#8a5a00;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:1020px;margin:0 auto;padding:20px 16px 48px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:800;letter-spacing:.02em}.brand small{display:block;color:var(--mut);font-weight:600}
+.lang button{border:1px solid var(--line);background:#fff;padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:700;margin-left:6px}
+.lang button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hero{background:var(--ink);color:#fff;border-radius:16px;padding:28px;margin:18px 0}
+.hero h1{margin:0 0 8px;font-size:30px;line-height:1.2}.hero p{margin:6px 0;color:#cdd9ea;max-width:760px}
+.pill{display:inline-block;background:#ffffff22;border:1px solid #ffffff44;border-radius:999px;padding:4px 10px;font-size:13px;margin:4px 6px 0 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:14px 0}
+.card h2{margin:0 0 4px;font-size:20px}.card h2 span{color:var(--blue)}
+.sub{color:var(--mut);margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+label{display:block;font-size:13px;font-weight:700;color:var(--mut);margin-bottom:4px}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:15px;background:#fff}
+.btn{background:var(--blue);color:#fff;border:0;padding:11px 18px;border-radius:9px;font-weight:800;cursor:pointer;font-size:15px}
+.btn.ghost{background:#eef3fa;color:var(--ink);border:1px solid var(--line)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.alert{border-radius:10px;padding:12px 14px;margin-top:14px;font-weight:650}
+.alert.ok{background:#e6f4ea;color:var(--green);border:1px solid #bfe3c8}
+.alert.warn{background:#fff4d6;color:var(--amber);border:1px solid #f0d48a}
+.alert.bad{background:#fdecea;color:var(--red);border:1px solid #f5c2bd}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+th{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+td input{padding:7px;font-size:14px}
+.rank{border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}
+.rank.first{border-color:var(--blue);box-shadow:0 0 0 2px #0f62fe22}
+.rank h3{margin:0}.score{font-size:26px;font-weight:900}
+.bar{height:9px;background:#e8eef5;border-radius:99px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--blue)}
+.kv{display:flex;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:14px}.kv b{color:var(--ink)}
+.note{font-size:13px;color:var(--mut)}.formula{background:#eef3fa;border-radius:9px;padding:10px 12px;font-family:ui-monospace,Menlo,monospace;font-size:13px;overflow:auto}
+footer{color:var(--mut);font-size:13px;text-align:center;margin-top:22px}
+@media(max-width:640px){.hero h1{font-size:24px}table{font-size:13px}}
+</style></head><body><div class="wrap">
+<div class="top"><div class="brand">HUBER WOODS<small data-i18n="brandSub">FTL · Point-to-Point · Human-in-the-loop</small></div>
+<div class="lang"><button data-lang="en" class="on">English</button><button data-lang="es">Español</button><button data-lang="zh">中文</button></div></div>
+<header class="hero"><h1 data-i18n="heroTitle">FTL Smart Dispatch Co-pilot</h1>
+<p data-i18n="heroSub">A co-pilot, not a black box. It checks the data, predicts acceptance, and ranks carriers — the dispatcher still makes the final call.</p>
+<div><span class="pill" data-i18n="pill1">Wed / Thu dispatch ritual</span><span class="pill" data-i18n="pill2">Friday fine-tuning</span><span class="pill" data-i18n="pill3">Dispatcher decides</span></div></header>
+
+<section class="card"><h2><span>1</span> · <span data-i18n="m1Title">Data Guardrail — Rate Check</span></h2>
+<p class="sub" data-i18n="m1Sub">Stops a bad rate from entering OTM. Flags any new rate that deviates from the historical average by more than the threshold.</p>
+<div class="grid"><div><label data-i18n="m1Cur">New rate ($)</label><input id="curRate" type="number" value="1450"></div>
+<div><label data-i18n="m1Hist">Historical average ($)</label><input id="histRate" type="number" value="1000"></div>
+<div><label data-i18n="m1Thr">Threshold (%)</label><input id="thr" type="number" value="15" min="1" max="100"></div></div>
+<div class="btnrow"><button class="btn" onclick="checkRate()" data-i18n="m1Btn">Check rate</button></div>
+<div id="rateOut"></div></section>
+
+<section class="card"><h2><span>2</span> · <span data-i18n="m2Title">Acceptance Prediction</span></h2>
+<p class="sub" data-i18n="m2Sub">History + price competitiveness + peak-day pressure. Result is clipped to 5%–99%.</p>
+<div class="grid"><div><label data-i18n="m2Hist">Historical accept rate (0–1)</label><input id="histAcc" type="number" step="0.01" min="0" max="1" value="0.88"></div>
+<div><label data-i18n="m2Price">Price competitiveness (market ÷ quote)</label><input id="priceComp" type="number" step="0.01" value="1.00"></div>
+<div><label data-i18n="m2Peak">Peak dispatch day (Wed / Thu)?</label><select id="peak"><option value="1" data-i18n="yes">Yes</option><option value="0" data-i18n="no">No</option></select></div></div>
+<div class="btnrow"><button class="btn" onclick="predictOne()" data-i18n="m2Btn">Predict acceptance</button></div>
+<div id="predOut"></div></section>
+
+<section class="card"><h2><span>3</span> · <span data-i18n="m3Title">Carrier Ranking — Weighted Score</span></h2>
+<p class="sub" data-i18n="m3Sub">Cheapest is not automatically best. Cost, commitment gap and predicted acceptance are scored together.</p>
+<div class="formula">Total Score = w₁ × Cost Score + w₂ × Commitment Score + w₃ × Acceptance Probability &nbsp;·&nbsp; ×100</div>
+<div class="grid" style="margin-top:14px"><div><label><span data-i18n="wCost">Cost weight</span> — <b id="wCostV">40%</b></label><input id="wCost" type="range" min="0" max="100" value="40" oninput="syncW()"></div>
+<div><label><span data-i18n="wCom">Commitment weight</span> — <b id="wComV">30%</b></label><input id="wCom" type="range" min="0" max="100" value="30" oninput="syncW()"></div>
+<div><label><span data-i18n="wAcc">Acceptance weight</span> — <b id="wAccV">30%</b></label><input id="wAcc" type="range" min="0" max="100" value="30" oninput="syncW()"></div>
+<div><label data-i18n="mktAvg">Historical market average ($)</label><input id="mktAvg" type="number" value="1020"></div></div>
+<p class="note"><span data-i18n="wSum">Weights sum</span>: <b id="wSum">100%</b> <span id="wWarn"></span></p>
+<div style="overflow:auto"><table><thead><tr><th data-i18n="thName">Carrier</th><th data-i18n="thQuote">Quote ($)</th><th data-i18n="thHist">Hist. accept</th><th data-i18n="thTarget">Weekly target</th><th data-i18n="thAlloc">Allocated so far</th><th></th></tr></thead><tbody id="carrierBody"></tbody></table></div>
+<div class="btnrow"><button class="btn" onclick="runRank()" data-i18n="runBtn">Rank carriers</button>
+<button class="btn ghost" onclick="addCarrier()" data-i18n="addBtn">+ Add carrier</button>
+<button class="btn ghost" onclick="resetDemo()" data-i18n="resetBtn">Reset demo data</button></div>
+<div id="rankOut"></div>
+<p class="note" data-i18n="m3Note">Demo data: Carrier A $1,050 / 95% · Carrier B $980 / 60% · Carrier C $1,020 / 88%. With the default weights, B ranks #1 on price — but its 56% predicted acceptance is flagged, so the dispatcher can still pick A.</p>
+</section>
+<footer><span data-i18n="foot">Prototype v1 · Algorithm in Python: algorithm.py · Same formulas in this page (JavaScript port) · Recommendation only — dispatcher makes the final decision.</span><br><span id="ver">v1.0 · 2026-11-15</span></footer>
+</div>
+<script>
+const I18N={
+en:{brandSub:"FTL · Point-to-Point · Human-in-the-loop",heroTitle:"FTL Smart Dispatch Co-pilot",heroSub:"A co-pilot, not a black box. It checks the data, predicts acceptance, and ranks carriers — the dispatcher still makes the final call.",pill1:"Wed / Thu dispatch ritual",pill2:"Friday fine-tuning",pill3:"Dispatcher decides",m1Title:"Data Guardrail — Rate Check",m1Sub:"Stops a bad rate from entering OTM. Flags any new rate that deviates from the historical average by more than the threshold.",m1Cur:"New rate ($)",m1Hist:"Historical average ($)",m1Thr:"Threshold (%)",m1Btn:"Check rate",m2Title:"Acceptance Prediction",m2Sub:"History + price competitiveness + peak-day pressure. Result is clipped to 5%–99%.",m2Hist:"Historical accept rate (0–1)",m2Price:"Price competitiveness (market ÷ quote)",m2Peak:"Peak dispatch day (Wed / Thu)?",yes:"Yes",no:"No",m2Btn:"Predict acceptance",m3Title:"Carrier Ranking — Weighted Score",m3Sub:"Cheapest is not automatically best. Cost, commitment gap and predicted acceptance are scored together.",wCost:"Cost weight",wCom:"Commitment weight",wAcc:"Acceptance weight",mktAvg:"Historical market average ($)",wSum:"Weights sum",thName:"Carrier",thQuote:"Quote ($)",thHist:"Hist. accept",thTarget:"Weekly target",thAlloc:"Allocated so far",runBtn:"Rank carriers",addBtn:"+ Add carrier",resetBtn:"Reset demo data",m3Note:"Demo data: Carrier A $1,050 / 95% · Carrier B $980 / 60% · Carrier C $1,020 / 88%. With the default weights, B ranks #1 on price — but its 56% predicted acceptance is flagged, so the dispatcher can still pick A.",foot:"Prototype v1 · Algorithm in Python: algorithm.py · Same formulas in this page (JavaScript port) · Recommendation only — dispatcher makes the final decision.",ok:"Data check passed",bad:"Rate anomaly alert",pred:"Predicted acceptance",reasonCheap:"Highly competitive rate",reasonStable:"Very stable history",reasonRisk:"Note: higher recent rejection risk",rankLabel:"Rank",score:"Total score",quote:"Quote",accept:"Predicted acceptance",costS:"Cost score",comS:"Commitment score",weightsWarn:"Weights should sum to 100% — they will be normalised.",remove:"Remove"},
+es:{brandSub:"FTL · Punto a punto · Con supervisión humana",heroTitle:"Copiloto inteligente de despacho FTL",heroSub:"Un copiloto, no una caja negra. Verifica los datos, predice la aceptación y clasifica a los transportistas; el despachador toma la decisión final.",pill1:"Ritual de despacho mié. / jue.",pill2:"Ajuste fino el viernes",pill3:"Decide el despachador",m1Title:"Control de datos — Verificación de tarifa",m1Sub:"Evita que una tarifa errónea entre en OTM. Alerta si la nueva tarifa se desvía del promedio histórico más que el umbral.",m1Cur:"Tarifa nueva ($)",m1Hist:"Promedio histórico ($)",m1Thr:"Umbral (%)",m1Btn:"Verificar tarifa",m2Title:"Predicción de aceptación",m2Sub:"Historial + competitividad de precio + presión del día pico. El resultado se limita a 5%–99%.",m2Hist:"Tasa histórica de aceptación (0–1)",m2Price:"Competitividad de precio (mercado ÷ cotización)",m2Peak:"¿Día pico de despacho (mié. / jue.)?",yes:"Sí",no:"No",m2Btn:"Predecir aceptación",m3Title:"Clasificación de transportistas — Puntuación ponderada",m3Sub:"Lo más barato no es automáticamente lo mejor. Costo, brecha de compromiso y aceptación prevista se puntúan juntos.",wCost:"Peso del costo",wCom:"Peso del compromiso",wAcc:"Peso de la aceptación",mktAvg:"Promedio histórico del mercado ($)",wSum:"Suma de pesos",thName:"Transportista",thQuote:"Cotización ($)",thHist:"Acept. hist.",thTarget:"Objetivo semanal",thAlloc:"Asignado hasta ahora",runBtn:"Clasificar transportistas",addBtn:"+ Añadir transportista",resetBtn:"Restablecer datos de demostración",m3Note:"Datos de demostración: Transportista A $1.050 / 95% · B $980 / 60% · C $1.020 / 88%. Con los pesos por defecto, B queda #1 por precio, pero su aceptación prevista del 56% queda marcada, así que el despachador aún puede elegir A.",foot:"Prototipo v1 · Algoritmo en Python: algorithm.py · Mismas fórmulas en esta página (versión JavaScript) · Solo recomendación: la decisión final es del despachador.",ok:"Verificación de datos superada",bad:"Alerta de anomalía en la tarifa",pred:"Aceptación prevista",reasonCheap:"Tarifa muy competitiva",reasonStable:"Historial muy estable",reasonRisk:"Nota: mayor riesgo reciente de rechazo",rankLabel:"Puesto",score:"Puntuación total",quote:"Cotización",accept:"Aceptación prevista",costS:"Puntuación de costo",comS:"Puntuación de compromiso",weightsWarn:"Los pesos deben sumar 100%: se normalizarán.",remove:"Quitar"},
+zh:{brandSub:"整车 · 点到点 · 人机协同",heroTitle:"FTL 智能调度副驾驶",heroSub:"是副驾驶，不是黑盒。它先校验数据、再预测接单概率、最后给承运商排序——最终决定权仍在调度员手里。",pill1:"周三 / 周四集中调度",pill2:"周五精细调整",pill3:"调度员说了算",m1Title:"数据守门员——运费校验",m1Sub:"防止错误运费进入 OTM。新运费偏离历史均值超过阈值时，立即报警。",m1Cur:"新录入运费 ($)",m1Hist:"历史均值 ($)",m1Thr:"阈值 (%)",m1Btn:"校验运费",m2Title:"接单概率预测",m2Sub:"历史履约率 + 价格竞争力 + 高峰日压力。结果限制在 5%–99%。",m2Hist:"历史接单率 (0–1)",m2Price:"价格竞争力 (市场均价 ÷ 报价)",m2Peak:"是否调度高峰日（周三 / 周四）？",yes:"是",no:"否",m2Btn:"预测接单率",m3Title:"承运商排序——多目标加权评分",m3Sub:"最便宜不一定最好。成本、承诺缺口、预测接单率一起打分。",wCost:"成本权重",wCom:"承诺权重",wAcc:"履约权重",mktAvg:"历史市场均价 ($)",wSum:"权重合计",thName:"承运商",thQuote:"报价 ($)",thHist:"历史接单率",thTarget:"本周目标",thAlloc:"已分配",runBtn:"开始排序",addBtn:"+ 添加承运商",resetBtn:"恢复演示数据",m3Note:"演示数据：A $1,050 / 95% · B $980 / 60% · C $1,020 / 88%。默认权重下 B 因价格排第 1，但其 56% 的预测接单率会被标红提示，调度员仍可选择 A。",foot:"原型 v1 · Python 算法见 algorithm.py · 本页为同公式 JavaScript 实现 · 仅供推荐参考，最终决定由调度员做出。",ok:"数据校验通过",bad:"数据异常警报",pred:"预测接单率",reasonCheap:"运费极具竞争力",reasonStable:"历史履约极稳",reasonRisk:"注意：近期履约风险较高",rankLabel:"第",score:"综合得分",quote:"报价",accept:"预测接单率",costS:"成本得分",comS:"承诺得分",weightsWarn:"权重合计应为 100%，将自动归一化。",remove:"删除"}};
+let LANG='en'; const T=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;
+function setLang(l){LANG=l;document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=T(el.dataset.i18n)});document.documentElement.lang=l==='zh'?'zh-CN':l;renderCarriers();syncW();}
+document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+const round2=x=>Math.round(x*100)/100;
+const clip=(x,a,b)=>Math.min(b,Math.max(a,x));
+function checkRateAnomaly(cur,hist,thr){const dev=Math.abs(cur-hist)/hist;return dev>thr?{ok:false,dev}:{ok:true,dev}}
+function predictAcceptance(hist,priceComp,peak){let adj=(priceComp-1)*0.15;if(peak)adj-=0.05;return round2(clip(hist+adj,0.05,0.99))}
+function checkRate(){const cur=+document.getElementById('curRate').value,hist=+document.getElementById('histRate').value,thr=(+document.getElementById('thr').value)/100;const r=checkRateAnomaly(cur,hist,thr);document.getElementById('rateOut').innerHTML=r.ok?`<div class="alert ok">✅ ${T('ok')} — ${LANG==='zh'?'偏离':LANG==='es'?'Desviación':'Deviation'} ${(r.dev*100).toFixed(1)}%</div>`:`<div class="alert bad">⚠️ ${T('bad')}: $${cur} vs $${hist} — ${(r.dev*100).toFixed(1)}% &gt; ${(thr*100).toFixed(0)}%</div>`}
+function predictOne(){const p=predictAcceptance(+document.getElementById('histAcc').value,+document.getElementById('priceComp').value,document.getElementById('peak').value==='1');document.getElementById('predOut').innerHTML=`<div class="alert ${p>0.85?'ok':p>0.7?'warn':'bad'}">${T('pred')}: <b>${Math.round(p*100)}%</b></div>`}
+let carriers=[];
+const DEMO=[{name:'Carrier A',quoted_cost:1050,historical_accept_rate:0.95,target_allocation:50,current_allocated:20},{name:'Carrier B',quoted_cost:980,historical_accept_rate:0.60,target_allocation:20,current_allocated:18},{name:'Carrier C',quoted_cost:1020,historical_accept_rate:0.88,target_allocation:40,current_allocated:38}];
+function resetDemo(){carriers=JSON.parse(JSON.stringify(DEMO));renderCarriers();}
+function renderCarriers(){const tb=document.getElementById('carrierBody');tb.innerHTML=carriers.map((c,i)=>`<tr><td><input value="${c.name}" onchange="carriers[${i}].name=this.value"></td><td><input type="number" value="${c.quoted_cost}" onchange="carriers[${i}].quoted_cost=+this.value"></td><td><input type="number" step="0.01" min="0" max="1" value="${c.historical_accept_rate}" onchange="carriers[${i}].historical_accept_rate=+this.value"></td><td><input type="number" value="${c.target_allocation}" onchange="carriers[${i}].target_allocation=+this.value"></td><td><input type="number" value="${c.current_allocated}" onchange="carriers[${i}].current_allocated=+this.value"></td><td><button class="btn ghost" onclick="carriers.splice(${i},1);renderCarriers()">${T('remove')}</button></td></tr>`).join('')}
+function addCarrier(){carriers.push({name:'Carrier '+(String.fromCharCode(65+carriers.length)),quoted_cost:1000,historical_accept_rate:0.85,target_allocation:30,current_allocated:10});renderCarriers();}
+function syncW(){const a=+document.getElementById('wCost').value,b=+document.getElementById('wCom').value,c=+document.getElementById('wAcc').value;document.getElementById('wCostV').textContent=a+'%';document.getElementById('wComV').textContent=b+'%';document.getElementById('wAccV').textContent=c+'%';document.getElementById('wSum').textContent=(a+b+c)+'%';document.getElementById('wWarn').textContent=(a+b+c)!==100?' — '+T('weightsWarn'):''}
+function rankCarriers(data,w,mkt){const costs=data.map(c=>c.quoted_cost);const mn=Math.min(...costs);let mx=Math.max(...costs);if(mx===mn)mx=mn+1;const out=data.map(c=>{const costScore=mx!==mn?1-(c.quoted_cost-mn)/(mx-mn):1;const gap=Math.max(0,c.target_allocation-c.current_allocated);const comScore=c.target_allocation>0?Math.min(1,gap/c.target_allocation):0.5;const acc=predictAcceptance(c.historical_accept_rate,mkt/c.quoted_cost,true);const total=round2((w.cost*costScore+w.commitment*comScore+w.acceptance*acc)*100);const reasons=[];if(costScore>0.8)reasons.push('💰 '+T('reasonCheap'));if(acc>0.85)reasons.push(`🛡️ ${T('reasonStable')} (${Math.round(acc*100)}%)`);else reasons.push(`⚠️ ${T('reasonRisk')} (${Math.round(acc*100)}%)`);return{name:c.name,total,quoted_cost:c.quoted_cost,costScore:round2(costScore),comScore:round2(comScore),acc,reasons}});out.sort((x,y)=>y.total-x.total);return out}
+function runRank(){let wc=+document.getElementById('wCost').value,wc2=+document.getElementById('wCom').value,wc3=+document.getElementById('wAcc').value;const s=wc+wc2+wc3||1;const w={cost:wc/s,commitment:wc2/s,acceptance:wc3/s};const res=rankCarriers(carriers,w,+document.getElementById('mktAvg').value);document.getElementById('rankOut').innerHTML=res.map((r,i)=>`<div class="rank ${i===0?'first':''}"><h3>${i===0?'🏆 ':''}${T('rankLabel')} ${i+1} — ${r.name}</h3><div class="score">${r.total}</div><div class="bar"><i style="width:${r.total}%"></i></div><div class="kv"><span>${T('quote')}: <b>$${r.quoted_cost}</b></span><span>${T('accept')}: <b>${Math.round(r.acc*100)}%</b></span><span>${T('costS')}: <b>${r.costScore}</b></span><span>${T('comS')}: <b>${r.comScore}</b></span></div><p>${r.reasons.join('； ')}</p></div>`).join('')}
+resetDemo();syncW();checkRate();runRank();
+</script></body></html>
